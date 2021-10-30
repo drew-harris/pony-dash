@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
+
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+
+import { auth, db } from './firebase';
+
 import './App.css';
+import { signInAnonymously } from '@firebase/auth';
 
 function App() {
+
+  const [ messages, setMessages ] = useState([]);
+
+  useEffect(() => {
+    signInAnonymously(auth)
+      .then(() => {
+        console.log('signed in anonymously');
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    
+    const q = query(collection(db, 'messages'));
+    onSnapshot(q, (snapshot) => {
+      const messages = [];
+      snapshot.forEach(doc => {
+        messages.push(doc.data());
+      });
+      setMessages(messages);
+    });
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {auth.currentUser ? auth.currentUser.uid : 'loading...'}
+      { messages ? messages.map(message => <div key={message.id}>{message.text}</div>) : 'loading...'}
     </div>
   );
 }
