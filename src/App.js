@@ -27,6 +27,8 @@ function App() {
             snapshot.forEach(doc => {
                 messages.push(doc.data());
             });
+            messages.sort((first, second) => first.time - second.time);
+            console.log(messages);
             setMessages(messages);
         });
     }, []);

@@ -14,7 +14,10 @@ function PonyTextBox({ user }) {
     async function handleClick(e) {
         if (textInfo.text.trim()) {
             setTextInfo({ user, text: '' });
-            await addDoc(collection(db, 'messages'), textInfo);
+            await addDoc(collection(db, 'messages'), {
+                ...textInfo,
+                time: Date.now(),
+            });
         } else {
             alert('empty text');
             setTextInfo({ user, text: '' });
@@ -27,7 +30,7 @@ function PonyTextBox({ user }) {
                 onChange={e => setTextInfo({ user, text: e.target.value })}
                 value={textInfo.text}
                 name='chat'
-                id='this'
+                id='ratatouille'
                 cols='29'
                 rows='10'
                 placeholder='Send a Message'
